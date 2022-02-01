@@ -1,3 +1,7 @@
+# exclude data from source control by default
+/input/
+/output/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -43,18 +47,8 @@ nosetests.xml
 coverage.xml
 *.cover
 
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-
 # Sphinx documentation
 docs/_build/
-
-# PyBuilder
-target/
 
 # DotEnv configuration
 .env
@@ -75,15 +69,6 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# exclude data from source control by default
-/data/
 
-# Mac OS-specific storage files
-.DS_Store
 
-# vim
-*.swp
-*.swo
 
-# Mypy cache
-.mypy_cache/

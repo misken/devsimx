@@ -1,10 +1,9 @@
 devsimx
 ==============================
 
-Example simulation development project
+Example "simulation" development project
 
-Project Organization
---------------------
+
 
 
 

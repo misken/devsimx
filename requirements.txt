@@ -3,5 +3,9 @@
 
 # external requirements
 Sphinx
+numpy
+simpy
+pyyaml
+
 
 

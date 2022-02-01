@@ -5,20 +5,16 @@ channels:
 dependencies:
   - numpy
   - pandas
-  - scipy
+  - simpy
   - scikit-learn
   - matplotlib
-  - jupyter
   - jupyterlab
-  - simpy
   - networkx
-  - sphinx
-  - myst-parser
-  - seaborn
+  - statsmodels
+  - pyyaml
+  - scipy
+  - pytest
   - cookiecutter
-  - pillow
-  - python-graphviz
   - pip
-
     
     

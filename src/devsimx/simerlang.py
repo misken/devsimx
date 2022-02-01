@@ -1,15 +1,13 @@
 import sys
 from datetime import datetime
-
 import logging
-from pathlib import Path
 import argparse
 
 import numpy as np
 from numpy.random import default_rng
-
 import yaml
 
+import simio
 
 """
 Generate random samples from an erlang-k distribution
@@ -35,20 +33,6 @@ Details
 * during development, works correctly when installed in "editable mode"
 * deploy to GitHub (not worrying about publishing to PyPI or Conda Forge for now)
 
-Planned enhancements from obflow_5:
-
-Goal is to be able to run new scenarios for the obsim experiments. Model
-needs to match Simio model functionality.
-
-- LOS distributions that match the obsim experiments
-- LOS adjustment in LDR based on wait time in OBS
-- logging
-- read key scenario inputs from a file
-
-Key Lessons Learned:
-
-- Any function that is a generator and might potentially yield for an event
-  must get registered as a process.
 
 """
 
@@ -118,6 +102,32 @@ def process_command_line(argv=None):
     return args
 
 
+def update_args(args, config):
+    """
+    Update args namespace values from config dictionary
+
+    Parameters
+    ----------
+    args : namespace
+    config : dict
+
+    Returns
+    -------
+    Updated args namespace
+    """
+
+    # Convert args namespace to a dict
+    args_dict = vars(args)
+
+    # Update args dict from config dict
+    for key in config.keys():
+        args_dict[key] = config[key]
+
+    # Convert dict to updated namespace
+    args = argparse.Namespace(**args_dict)
+    return args
+
+
 def generate_rvs(k=1, b=1, n=1, seed=None):
     """
 
@@ -143,70 +153,23 @@ def generate_rvs(k=1, b=1, n=1, seed=None):
     return rvs
 
 
-def rvs_tocsv(rvs, args):
-    """
-    Export random variates to csv
-
-    This would often be a pandas dataframe. Simple 1d array, for now, is written.
-
-    Parameters
-    ----------
-    rvs : ndarray
-    args : namespace
-
-    Returns
-    -------
-    No return value, the ``rvs`` data written to ``args.output``.
-
-    """
-    np.savetxt(args.output, rvs, delimiter=',')
-    logging.info(f'random variates written to {args.output}')
-
-
-def update_args(args, config):
-    """
-    Update args namespace values from config dictionary
-
-    Parameters
-    ----------
-    args : namespace
-    config : dict
-
-    Returns
-    -------
-    Updated args namespace
-    """
-
-    # Convert args namespace to a dict
-    args_dict = vars(args)
-    logging.info(f'args passed = {args_dict}')
-
-    # Update args dict from config dict
-    for key in config.keys():
-        args_dict[key] = config[key]
-
-    logging.info(f'args post config = {args_dict}')
-    # Convert dict to updated namespace
-    args = argparse.Namespace(**args_dict)
-    return args
-
-
 def main(argv=None):
     """
 
     :param argv:
     :return:
     """
-    # Get input arguments
-    args = process_command_line(argv)
-
-    # Setup logging
-    loglevel = args.loglevel
+    # Set logging level
     logging.basicConfig(
-        level=loglevel,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         stream=sys.stdout,
     )
+
+    # Get input arguments
+    args = process_command_line(argv)
+
+    logger = logging.getLogger()
+    logger.setLevel(args.loglevel)
 
     # Update input args if config file passed
     if args.config is not None:
@@ -215,14 +178,14 @@ def main(argv=None):
             yaml_config = yaml.safe_load(yaml_file)
             args = update_args(args, yaml_config)
 
-    logging.info(args)
+    logger.info(args)
 
     # Generate erlang random variates
     erlang_variates = generate_rvs(k=args.k, b=args.b, n=args.n, seed=args.s)
 
     # Handle output
     if args.output is not None:
-        rvs_tocsv(erlang_variates, args)
+        simio.rvs_tocsv(erlang_variates, args)
         print(erlang_variates)
     else:
         print(erlang_variates)
