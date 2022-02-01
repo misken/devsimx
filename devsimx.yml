@@ -1,0 +1,24 @@
+name: devsimx
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - jupyter
+  - jupyterlab
+  - simpy
+  - networkx
+  - sphinx
+  - myst-parser
+  - seaborn
+  - cookiecutter
+  - pillow
+  - python-graphviz
+  - pip
+
+    
+    
