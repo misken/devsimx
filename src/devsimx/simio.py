@@ -9,7 +9,7 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-def rvs_tocsv(rvs, args):
+def rvs_tocsv(rvs, _output):
     """
     Export random variates to csv
 
@@ -25,8 +25,8 @@ def rvs_tocsv(rvs, args):
     No return value, the ``rvs`` data written to ``args.output``.
 
     """
-    np.savetxt(args.output, rvs, delimiter=',')
-    logger.info(f'random variates written to {args.output}')
+    np.savetxt(_output, rvs, delimiter=',')
+    logger.info(f'random variates written to {_output}')
 
 
 def read_yaml_config(config_file):

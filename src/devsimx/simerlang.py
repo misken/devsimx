@@ -156,18 +156,26 @@ def generate_rvs(k=1, b=1, n=1, seed=None):
 def main(argv=None):
     """
 
-    :param argv:
-    :return:
+    Parameters
+    ----------
+    argv
+
+    Returns
+    -------
+    0 if no errors
+
     """
-    # Set logging level
+
+    # Get input arguments
+    args = process_command_line(argv)
+
+    # Quick setup of root logger
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         stream=sys.stdout,
     )
 
-    # Get input arguments
-    args = process_command_line(argv)
-
+    # Retrieve root logger (no logger name passed to ``getLogger()``) and update its level
     logger = logging.getLogger()
     logger.setLevel(args.loglevel)
 
@@ -178,6 +186,7 @@ def main(argv=None):
             yaml_config = yaml.safe_load(yaml_file)
             args = update_args(args, yaml_config)
 
+    # Show arg values used for this scenario
     logger.info(args)
 
     # Generate erlang random variates
@@ -185,7 +194,7 @@ def main(argv=None):
 
     # Handle output
     if args.output is not None:
-        simio.rvs_tocsv(erlang_variates, args)
+        simio.rvs_tocsv(erlang_variates, args.output)
         print(erlang_variates)
     else:
         print(erlang_variates)
