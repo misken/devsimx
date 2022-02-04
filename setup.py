@@ -7,6 +7,7 @@ setup(
     version='0.1.0',
     description='Example simulation development project',
     install_requires=[
+        'pandas',
         'numpy',
         'pyyaml',
     ],

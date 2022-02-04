@@ -1,7 +1,7 @@
 A Python analytics sample development project
 =============================================
 
-**tldr** - Sample Python project and cookiecutter for the kind of analytics projects I do
+**tldr** - Sample Python project and cookiecutter for the kinds of analytics projects I do
 
 * `Sample analytics project repo on GitHub <>`_
 * `Associated cookiecutter repo on GitHub <>`_
@@ -160,7 +160,7 @@ Here's what the sample project directory tree looks like: (TODO: Update this wit
     │        │    └── scenario_1.yaml
     │        ├── output
     │        │    └── test.csv
-    │        ├── simerlang.py
+    │        ├── sim_erlang .py
     │        └── simio.py
     └── tox.ini
 
@@ -177,7 +177,7 @@ done `per the docs <https://docs.python.org/3/library/__main__.html#packaging-co
     same behavior when run directly (i.e. python3 echo.py) as it will have if we later
     package it as a console script entry-point in a pip-installable package.
 
-Here's what the code looks like in ``simerlang.py`` at the module level.
+Here's what the code looks like in ``sim_erlang.py`` at the module level.
 
 .. code::
     if __name__ == '__main__':
@@ -189,9 +189,122 @@ flow of the application.
 Simple CLI based on ``argparse``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The parser logic is in ``process_command_line`` which is called from ``main()``.
+All of the
+arguments are optional keyword arguments with sensible default values. There is a ``--config`` argument that
+takes a configuration filename in which all of the other input arguments can be set. Any input values set
+via the config file will override any set via the command line. This makes it easy to
+run multiple scenarios of this simulation by creating scenario specific configuration files. They are
+YAML formatted files and the details are discussed below.
 
-If argv == None, then ``parse_args`` will use ``sys.argv[1:]``.
+Currently there is no parameter input validation other than through specifying a ``type=`` attribute in
+the ``add_argument`` method call.
+
+.. code::
+    parser.add_argument(
+        '-n', type=int, default=1,
+        help="Number of random variates to generate (default is 1)"
+    )
+
+The parser logic is in ``sim_erlang.process_command_line()`` which is called from ``main()``.  The call looks like this:
+
+.. code::
+
+    def main(argv=None):
+        """
+        Main program logic
+
+        Parameters
+        ----------
+        argv : list of command line arguments (Default is None)
+
+        Returns
+        -------
+        0 if no errors
+
+        """
+
+        # Get input arguments
+        args = process_command_line(argv)
+
+    # More code ....
+
+and ``sim_erlang.process_command_line()`` looks like this:
+
+.. code::
+    def process_command_line(argv=None):
+        """
+        Parse command line arguments
+
+        Parameters
+        ----------
+        argv : list of arguments, or `None` for ``sys.argv[1:]``.
+
+        Returns
+        ----------
+        Namespace representing the argument list.
+        """
+        # Create the parser
+        parser = argparse.ArgumentParser(prog='sim_erlang    ',
+                                         description='Generate erlang random variates')
+
+        # Add arguments
+        parser.add_argument(
+            '-k', type=int, default=1,
+            help="Number of stages in erlang distribution (default is 1)"
+        )
+
+        ... more add argument code
+
+        args = parser.parse_args(argv)
+        return args
+
+
+If ``argv == None``, then ``parse_args`` will use ``sys.argv[1:]``.
 By including ``argv=None`` as input to ``main``, our program can be
 imported and ``main`` called with arguments. This will be useful for
 testing via pytest.
+
+More resources
+~~~~~~~~~~~~~~~
+
+* https://docs.python.org/3/howto/argparse.html
+* https://realpython.com/command-line-interfaces-python-argparse/
+
+Conda virtual environments: Setup and use
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PyCharm setup
+^^^^^^^^^^^^^^
+
+In **Settings | Tools | Python Integrated Tools**, set
+
+* default testing to pytest
+* default docstring format to NumPy
+
+
+
+
+Conda virtual environments: External and internal imports
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Development dependencies vs install dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+requirements.txt vs setup.py
+
+https://stackoverflow.com/questions/43658870/requirements-txt-vs-setup-py
+
+https://packaging.python.org/en/latest/discussions/install-requires-vs-requirements/
+
+    ``install_requires`` is a setuptools ``setup.py`` keyword that should be used to specify what a
+    project minimally needs to run correctly. When the project is installed by pip, this is the
+    specification that is used to install its dependencies.
+
+https://dev.to/bowmanjd/python-dev-environment-part-3-dependencies-with-installrequires-and-requirements-txt-kk3
+
+* Put dependencies needed for installation of the project by others in setup.py in install_requires parameter.
+
+* Put dev dependencies needed by the developer in requirements.txt
+    - Put -e . at top of requirements.txt
+    - Put external dependencies next and include things like pytest and Sphinx if needed by dev

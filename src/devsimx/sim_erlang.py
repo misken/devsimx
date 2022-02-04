@@ -7,7 +7,7 @@ import numpy as np
 from numpy.random import default_rng
 import yaml
 
-import simio
+import sim_io
 
 """
 Generate random samples from an erlang-k distribution
@@ -49,7 +49,6 @@ def process_command_line(argv=None):
     ----------
     Namespace representing the argument list.
     """
-
     # Create the parser
     parser = argparse.ArgumentParser(prog='simerlang',
                                      description='Generate erlang random variates')
@@ -155,10 +154,11 @@ def generate_rvs(k=1, b=1, n=1, seed=None):
 
 def main(argv=None):
     """
+    Main program logic
 
     Parameters
     ----------
-    argv
+    argv : list of command line arguments (Default is None)
 
     Returns
     -------
@@ -194,7 +194,7 @@ def main(argv=None):
 
     # Handle output
     if args.output is not None:
-        simio.rvs_tocsv(erlang_variates, args.output)
+        sim_io.rvs_tocsv(erlang_variates, args.output)
         print(erlang_variates)
     else:
         print(erlang_variates)
